@@ -1,4 +1,3 @@
-import java.util.Collection;
 
 public interface MyListInterface<E> {
     int size();

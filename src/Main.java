@@ -117,6 +117,7 @@ public class Main {
 
         myLinkedList.clear();
         myArrayList.clear();
+
         System.out.println("\n\t6. 리스트 클리어 후 리스트 출력 ");
                     printList(myLinkedList, myArrayList);
 
