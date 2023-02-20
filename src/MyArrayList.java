@@ -4,13 +4,19 @@ public class MyArrayList<E> implements MyListInterface<E>{
 
     //임의의 내부 배열 선언
     private final int ARRAY_START_NUMBER = 10;
-    private Object[] arr = new Object[ARRAY_START_NUMBER];
-    public MyArrayList(){};
+    private Object[] arr;
+
+    public MyArrayList(){
+        arr = new Object[ARRAY_START_NUMBER];
+    }
+    public MyArrayList(int arrayStartNumber) {
+        arr = new Object[arrayStartNumber];
+    }
 
     @Override
     public int size() {
         for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == null) { //리스트는 중간에 빈 원소가 없으므로, 첫번째 null이 끝이 된다
+            if (arr[i] == null) { //리스트는 중간에 빈 원소가 없으므로, 첫번째 null 이 끝이 된다
                 return i;
             }
         }
@@ -26,11 +32,6 @@ public class MyArrayList<E> implements MyListInterface<E>{
     public MyIterator<E> iterator() {
         return new MyIterator<E>(this);
     }
-    private void indexBoundChecker(int index){
-        if (index < 0 || index > size()) {
-            throw new IndexOutOfBoundsException();
-        }
-    }
 
     @Override
     public boolean contains(Object object) {
@@ -42,6 +43,15 @@ public class MyArrayList<E> implements MyListInterface<E>{
             }
         }
         return false;
+    }
+
+    @Override
+    public <E> void add(E element) {
+        if (size() >= arr.length) {
+            Object[] newArr = resizeArray(arr);
+            arr = newArr;
+        }
+        arr[size()] = element;
     }
 
     private Object[] resizeArray(Object[] arr){
@@ -57,18 +67,15 @@ public class MyArrayList<E> implements MyListInterface<E>{
             i++;
         }
 //      System.arraycopy(arr, 0, newArr, 0, arr.length);
-//      while 문을 사용하여 배열에 하나하나 담는 대신 arraycopy를 이용해 한번에 복사할 수도 있다.
-//      arr의 0번부터, arr.length만큼 복사해서, newarr의 0번부터 담는다 의 의미.
+//      while 문을 사용하여 배열에 하나하나 담는 대신 arraycopy 를 이용해 한번에 복사할 수도 있다.
+//      ar r의 0번부터, arr.length 만큼 복사해서, newArr 의 0번부터 담는다 의 의미.
         return newArr;
     }
 
-    @Override
-    public <E> void add(E element) {
-        if (size() >= arr.length) {
-            Object[] newArr = resizeArray(arr);
-            arr = newArr;
+    private void indexBoundChecker(int index){
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException();
         }
-        arr[size()] = element;
     }
 
     @Override
@@ -140,10 +147,14 @@ public class MyArrayList<E> implements MyListInterface<E>{
     @Override
     public void addAll(MyListInterface<? extends E> collection) {
         int requiredArraySize = size() + collection.size();
-        Object[] newArr = new Object[requiredArraySize];
+        E[] newArr = (E[]) new Object[requiredArraySize];
 
         System.arraycopy(arr, 0, newArr, 0, arr.length);
-        System.arraycopy(collection.toArray(), 0, newArr, size(), collection.size());
+        System.arraycopy(collection.toArray((E[]) new Object[collection.size()]), 0, newArr, size(), collection.size());
+//      = System.arraycopy(collection.toArray(newArr), 0, newArr, size(), collection.size());
+//        collection.toArray(***) : *** 안에 들어가는 배열은 E[]타입이기만 하면 길이 상관 없지만,
+//        이해를 돕기 위해서 collection.size()의 새 E[] 타입 배열을 생성해서 넣었다.
+
         arr = newArr;
     }
 
@@ -161,22 +172,12 @@ public class MyArrayList<E> implements MyListInterface<E>{
         }
         int index = 0;
         for(; index < arrSize; index++){
-            some[index] = (T)get(index);
+            some[index] = (T)get(index); //완벽하게 타입 안정성을 보장하지는 않지만, 런타임 에러로 해결한다.
+            //만약 클래스의 E와 메소드의 T를 정확하게 일치시키고 싶다면, 메소드의 타입 <T>를 <T extends E>로 주면 된다.
+            //하지만 toArray로 생성되는 배열과 List는 별개의 자료구조이므로, 배열은 상위 타입을 타입으로 가질 수 있기 때문에 <T>를 사용.
+            //공변-불공변을 참조할 것.
         }
         return some;
-    }
-
-    @Override
-    public Object[] toArray() {
-        int size = size();
-        Object[] arr = new Object[size];
-        MyIterator<E> iterator = iterator();
-
-        int index = 0;
-        while (iterator.hasNext()) {
-            arr[index++] = iterator.next();
-        }
-        return arr;
     }
 
 

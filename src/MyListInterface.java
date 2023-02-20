@@ -12,6 +12,5 @@ public interface MyListInterface<E> {
     void addAll(MyListInterface<? extends E> collection);
     void clear();
     <T> T[] toArray(T[] some); //to not type-casting every time
-    Object[] toArray();
 
 }

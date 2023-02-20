@@ -140,19 +140,6 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public Object[] toArray() {
-        Node<E> currentNode = node;
-        int i = 0;
-        Object[] newArr = new Object[size()];
-
-        for (; i <size(); i++){
-            newArr[i] = currentNode.getContent();
-            currentNode = currentNode.getNext();
-        }
-        return newArr;
-    }
-
-    @Override
     public void remove(Object object) {
         Node<E> current = node;
             while (current.getNext() != null) { // make sure current's next node isn't null
