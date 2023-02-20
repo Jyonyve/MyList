@@ -1,8 +1,10 @@
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class MyLinkedList<E> implements MyListInterface<E>{
-
     //노드를 선언하여 노드끼리 연결한다. 노드 클래스 필요
+    //끈 떨어진 노드는 자동으로 고립된 객체가 되어 가비지 컬렉션의 대상이 된다.
+
     private Node<E> node;
     public MyLinkedList(){
         node = null; // node를 널값으로 초기화해준다.
@@ -13,10 +15,9 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     public int size() {
         int i = 0;
         Node<E> current = node;
-        //node를 대신해서 동일하게 current를 선언해주면
-        //첫 node가 null인 경우를 검사할 수 있어서
-        //아무 값도 없을때 NullpointException이 뜨는 것을 방지해준다. => 바로 리턴 0 으로 넘어감.
-        //바로 node를 사용할 경우는 이 메소드 내에서 검증을 할 수 없어서 예외발생.
+        // node를 대신해서 동일한 값이 들어가는 current를 선언해주면
+        // 컴파일러로 하여금 첫 노드 값이 null일때도 안정적으로 이를 검사하고 핸들링할 수 있게 해준다.
+        // while문에서 .연산자로 getNext()를 호출했을때 NullPointException이 뜨는 오류를 방지할 수 있다.
         while (current !=null){
             current = current.getNext();
             i++;
@@ -26,12 +27,11 @@ public class MyLinkedList<E> implements MyListInterface<E>{
 
     @Override
     public boolean contains(Object object) {
-        int i = 0;
-        while (iterator().hasNext()){
-            if(get(i).equals(object)){
+        Iterator<E> iterator = iterator();
+        while (iterator.hasNext()){
+            if(iterator.next().equals(object)) {
                 return true;
             }
-            i++;
         }
         return false;
     }
@@ -67,12 +67,14 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     private Node<E> getIndexingNode(int index){
+        indexBoundChecker(index);
         Node<E> indexingNode = node;
-        for(int i = 0; i <index ;i++){
+        for (int i = 0; i < index; i++) {
             indexingNode = indexingNode.getNext();
         }
         return indexingNode;
     }
+
     private void indexBoundChecker(int index){
         if (index < 0 || index > size()) {
             throw new IndexOutOfBoundsException();
@@ -129,12 +131,10 @@ public class MyLinkedList<E> implements MyListInterface<E>{
             some = Arrays.copyOf(some, size);
         }
         int i = 0;
-        for (Node<E> firstNode = node; firstNode != null; firstNode = firstNode.getNext()) {
+        for (Node<E> firstNode = node; firstNode != null ; firstNode = firstNode.getNext()) {
             some[i++] = (T) firstNode.getContent(); //not perfectly type-safe, but original JAVA remain it as runtime exception too. (I checked it!)
         }
-//        if (some.length > size) {
-//            some[size] = null;
-//        } 마지막 원소를 정확하게 null로 세팅하는 if문이지만, 어차피 사이즈 이상의 길이는 null로 채워지기 때문에 생략하였다.
+
         return some;
     }
 
@@ -153,7 +153,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
 
     @Override
     public void remove(Object object) {
-        Node current = node;
+        Node<E> current = node;
             while (current.getNext() != null) { // make sure current's next node isn't null
             if (current.getNext().getContent().equals(object)) {
                 current.setNext(current.getNext().getNext());

@@ -33,20 +33,28 @@ public class MyArrayList<E> implements MyListInterface<E>{
     }
 
     @Override
+    public MyIterator<E> iterator() {
+        return new MyIterator<E>(this);
+    }
+
+    @Override
     public boolean contains(Object object) {
         MyIterator<E> iterator = iterator();
         while (iterator.hasNext()){
-            if(iterator.next().equals(object)){
+            E element = iterator.next();
+            if (element.equals(object)) {
                 return true;
             }
         }
         return false;
     }
 
-    @Override
-    public MyIterator<E> iterator() {
-        return new MyIterator<E>(this);
+    private void indexBoundChecker(int index){
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException();
+        }
     }
+
     private Object[] resizeArray(Object[] arr){
         Object[] newArr = new Object[arr.length *2];
         int i = 0;
@@ -84,14 +92,6 @@ public class MyArrayList<E> implements MyListInterface<E>{
         arr[size()] = element; //revised by chatGPT
     }
 
-    private void moveRight(int originalSize, Object[] arr, int index) {
-        for (; originalSize > index; originalSize--) {
-            arr[originalSize] = arr[originalSize - 1];
-            //-- 개념은 가장 오른쪽 끝에 있는 원소부터(제일 큰 것) 그 다음 오른쪽 빈칸으로 이동하는 것을 말함.
-            //index에 도달할 때까지 가장 오른쪽 원소부터 왼쪽으로 하나하나 옮겨가며 그 옆칸으로 이동시킨다.
-        }
-    }
-
     @Override
     public void add(int index, E element) {
         try {
@@ -100,9 +100,17 @@ public class MyArrayList<E> implements MyListInterface<E>{
                 arr = newArr;
             }
             moveRight(size(), arr, index);
+            arr[index] = element;
         } catch (IndexOutOfBoundsException exception){
             exception.printStackTrace();
             throw exception;
+        }
+    }
+    private void moveRight(int originalSize, Object[] arr, int index) {
+        for (; originalSize > index ; originalSize--) {
+            arr[originalSize] = arr[originalSize - 1];
+            //-- 개념은 가장 오른쪽 끝에 있는 원소부터(제일 큰 것) 그 다음 오른쪽 빈칸으로 이동하는 것을 말함.
+            //index에 도달할 때까지 가장 오른쪽 원소부터 왼쪽으로 하나하나 옮겨가며 그 옆칸으로 이동시킨다.
         }
     }
 
@@ -145,10 +153,14 @@ public class MyArrayList<E> implements MyListInterface<E>{
 
     @Override
     public void remove(int index) {
+        indexBoundChecker(index);
         int originalSize = size();
         if(index < originalSize -1){
             arr[index] = null;
             moveLeft(index, originalSize);
+        }
+        else {
+            arr[index] = null;
         }
     }
 
@@ -168,9 +180,10 @@ public class MyArrayList<E> implements MyListInterface<E>{
 
     @Override
     public <T> T[] toArray(T[] some) {
+        //<T>[]에 리스트의 원소를 담아서 리턴하는 메소드.
         int arrSize = size();
         if (some.length < arrSize) {
-            some = Arrays.copyOf(some, arrSize);
+            some = Arrays.copyOf(some, arrSize); //만약 리스트의 길이보다 작은 배열이 인자로 들어왔을 경우, 길이를 늘린다.
         }
         int index = 0;
         for(; index < arrSize; index++){
