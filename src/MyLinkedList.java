@@ -15,9 +15,9 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     public int size() {
         int i = 0;
         Node<E> current = node;
-        // node를 대신해서 동일한 값이 들어가는 current를 선언해주면
-        // 컴파일러로 하여금 첫 노드 값이 null일때도 안정적으로 이를 검사하고 핸들링할 수 있게 해준다.
-        // while문에서 .연산자로 getNext()를 호출했을때 NullPointException이 뜨는 오류를 방지할 수 있다.
+        // node 를 대신해서 동일한 값이 들어가는 current 를 선언해주면
+        // 컴파일러로 하여금 첫 노드 값이 null 일때도 안정적으로 이를 검사하고 핸들링할 수 있게 해준다.
+        // while 문에서 .연산자로 getNext()를 호출했을때 NullPointException 이 뜨는 오류를 방지할 수 있다.
         while (current !=null){
             current = current.getNext();
             i++;
@@ -48,8 +48,8 @@ public class MyLinkedList<E> implements MyListInterface<E>{
 
     @Override
     public <E> void add(E element) {
-        Node newNode = new Node<>(null, element); //일단 값을 담은 빈 노드를 만든다.
-        //이게 첫 add인 경우
+        Node newNode = new Node<>(null, element); //값을 담고 다음 노드가 없는 새 노드를 만든다.
+        //이게 첫 add 인 경우
         if(node == null){
             node = newNode;
         }
@@ -58,6 +58,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
             current.setNext(newNode);
         }
     }
+
     private Node<E> getLastNode(){
         Node<E> current = node;
         while (current !=null && current.getNext() != null){
@@ -87,7 +88,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         indexBoundChecker(index);
         //맨 첫번째 노드에 삽입하는 경우
         if(index == 0){
-            node = new Node<>(node, element); // 현재의 node를 다음 노드로 하는 새 노드를 만든다.
+            node = new Node<>(node, element); // 현재의 node(첫번째 노드)를 다음 노드로 하는 새 노드를 만든다.
             //챗gpt의 천재코드...
         }
         //2번째 이상의 노드에 삽입하는 경우
@@ -103,7 +104,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         indexBoundChecker(index);
         Node<E> removeNode = getIndexingNode(index);
         if (index == 0) {
-            node = node.getNext(); //다음 노드를 첫번째로 바꿔버림
+            node = node.getNext(); //다음(두번째) 노드를 첫번째로 바꿔버림
         }
         else{
             Node<E> beforeNode = getIndexingNode(index -1);
