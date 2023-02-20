@@ -80,7 +80,9 @@ public class Main {
         System.out.println("\n\t3. 삭제 후 리스트 출력 ");
                     printList(myLinkedList, myArrayList);
                     System.out.println("방금 지운 LHN의 값이 있나요?: " + myLinkedList.contains("LHN"));
-                    System.out.println("방금 지운 index 11의 값(AHS)이 있나요?: " + myArrayList.contains("AHS") + "\n");
+                    System.out.println("방금 지운 index 7(CSY)의 값이 있나요?: " + myLinkedList.contains("CSY"));
+                    System.out.println("방금 지운 KEJ의 값이 있나요?: " + myArrayList.contains("KEJ"));
+                    System.out.println("방금 지운 index 11의 값(AHS)이 있나요?: " + myArrayList.contains("AHS") +"\n");
 
 
 
