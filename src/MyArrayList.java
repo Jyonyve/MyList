@@ -46,7 +46,7 @@ public class MyArrayList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public <E> void add(E element) {
+    public void add(E element) {
         if (size() >= arr.length) {
             Object[] newArr = resizeArray(arr);
             arr = newArr;

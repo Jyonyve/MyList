@@ -4,7 +4,7 @@ public interface MyListInterface<E> {
     boolean empty();
     boolean contains(Object object);
     MyIterator<E> iterator();
-    <E> void add(E element);
+    void add(E element);
     void add(int index, E element);
     E get(int index);
     void remove(Object object);

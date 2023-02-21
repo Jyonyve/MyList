@@ -47,8 +47,8 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public <E> void add(E element) {
-        Node newNode = new Node<>(null, element); //값을 담고 다음 노드가 없는 새 노드를 만든다.
+    public void add(E element) {
+        Node<E> newNode = new Node<>(null, element); //값을 담고 다음 노드가 없는 새 노드를 만든다.
         //이게 첫 add 인 경우
         if(node == null){
             node = newNode;
@@ -89,7 +89,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         //맨 첫번째 노드에 삽입하는 경우
         if(index == 0){
             node = new Node<>(node, element); // 현재의 node(첫번째 노드)를 다음 노드로 하는 새 노드를 만든다.
-            //챗gpt의 천재코드...
+            //어떤 메소드에서도 node 를 명시적으로 다른 번째 노드로 바꾸고 있지 않기 때문에, 늘 node 는 첫번째 노드를 가리킨다.
         }
         //2번째 이상의 노드에 삽입하는 경우
         else {
@@ -97,6 +97,26 @@ public class MyLinkedList<E> implements MyListInterface<E>{
             currentNode.setNext(new Node<>(currentNode.getNext(), element));
         }
 
+    }
+
+    public E set(int index, E element) {
+        Node<E> beforeNode = getIndexingNode(index-1);
+        Node<E> newTailNode = beforeNode.getNext().getNext();
+        Node<E> newNode = new Node<E>(newTailNode, element); //newTailNode를 꼬리로 하는 새 노드를 만들고, 이걸 연결함
+        beforeNode.setNext(newNode);
+        return newNode.getContent();
+    }
+
+    @Override
+    public void remove(Object object) {
+        Node<E> current = node;
+        while (current.getNext() != null) { // make sure current's next node isn't null
+            if (current.getNext().getContent().equals(object)) {
+                current.setNext(current.getNext().getNext());
+                break; // stop after removing the first matching element
+            }
+            current = current.getNext();
+        }
     }
 
     @Override
@@ -115,7 +135,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     @Override
     public void addAll(MyListInterface<? extends E> collection) {
         for (int i = 0; i < collection.size(); i++) {
-            getLastNode().setNext(new Node<E>(null, collection.get(i)));
+            add(collection.get(i));
         }
     }
 
@@ -140,27 +160,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public void remove(Object object) {
-        Node<E> current = node;
-            while (current.getNext() != null) { // make sure current's next node isn't null
-            if (current.getNext().getContent().equals(object)) {
-                current.setNext(current.getNext().getNext());
-                break; // stop after removing the first matching element
-            }
-            current = current.getNext();
-        }
-    }
-
-    @Override
     public E get(int index) {
        return getIndexingNode(index).getContent();
-    }
-
-    public E set(int index, E element) {
-        Node<E> beforeNode = getIndexingNode(index-1);
-        Node<E> newTailNode = beforeNode.getNext().getNext();
-        Node<E> newNode = new Node<E>(newTailNode, element); //newTailNode를 꼬리로 하는 새 노드를 만들고, 이걸 연결함
-        beforeNode.setNext(newNode);
-        return newNode.getContent();
     }
 }

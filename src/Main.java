@@ -6,17 +6,19 @@ public class Main {
     //리스트 전체를 콘솔에 출력하는 인쇄하는 메소드 작성
     public static void printList(MyLinkedList myLinkedList, MyArrayList myArrayList){
         System.out.println("------------MyLinkedList-----------");
-        for(int i = 0; i < myLinkedList.size() ; i++){
-            System.out.println(i + " : " + myLinkedList.get(i));
-        }
-
-        System.out.println("\n------------MyArrayList-----------");
-        Iterator iterator = myArrayList.iterator();
+        Iterator iterator = myLinkedList.iterator();
         int index = 0;
         while (iterator.hasNext()) {
             System.out.println(index + " : " + iterator.next());
             index++;
         }
+        System.out.println("\nMyLinkedList size : " + myLinkedList.size());
+
+        System.out.println("\n------------MyArrayList-----------");
+        for(int i = 0; i < myArrayList.size() ; i++){
+            System.out.println(i + " : " + myArrayList.get(i));
+        }
+        System.out.println("\nMyArrayList size : " + myArrayList.size());
 
         System.out.println("\n********* List Finished *********\n");
     }
@@ -51,6 +53,7 @@ public class Main {
         myArrayList.add("KSK");
         myArrayList.add("AHS");
         myArrayList.add("KEJ");
+        myArrayList.add("KKH");
 
         System.out.println("\n\t1. 기본 리스트 출력 ");
                         printList(myLinkedList, myArrayList);
@@ -81,8 +84,12 @@ public class Main {
                     printList(myLinkedList, myArrayList);
                     System.out.println("방금 지운 LHN의 값이 있나요?: " + myLinkedList.contains("LHN"));
                     System.out.println("방금 지운 index 7(CSY)의 값이 있나요?: " + myLinkedList.contains("CSY"));
+                    System.out.println("지우지 않은 JDM의 값이 있나요?: " + myLinkedList.contains("JDM"));
+
+
                     System.out.println("방금 지운 KEJ의 값이 있나요?: " + myArrayList.contains("KEJ"));
-                    System.out.println("방금 지운 index 11의 값(AHS)이 있나요?: " + myArrayList.contains("AHS") +"\n");
+                    System.out.println("방금 지운 index 11의 값(AHS)이 있나요?: " + myArrayList.contains("AHS") );
+                    System.out.println("지우지 않은 KKH의 값이 있나요?: " + myArrayList.contains("KKH")+"\n");
 
 
 
@@ -105,10 +112,11 @@ public class Main {
         System.out.println("\n\t5. toArray로 만든 배열 출력 ");
                     System.out.println("~~~~~~~~~ arrArrayList ~~~~~~~~~");
                     Arrays.stream(arrArrayList).iterator().forEachRemaining(System.out :: println);
+                    System.out.println("arrArrayList length : " + arrArrayList.length);
 
                     System.out.println("\n~~~~~~~~~ arrLinkedList ~~~~~~~~~");
                     Arrays.stream(arrLinkedList).iterator().forEachRemaining(System.out :: println);
-
+                    System.out.println("arrLinkedList length : " + arrLinkedList.length);
 
 
         //List clearing, empty method test
