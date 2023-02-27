@@ -1,24 +1,20 @@
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class MyLinkedList<E> implements MyListInterface<E>{
-    //노드를 선언하여 노드끼리 연결한다. 노드 클래스 필요
-    //끈 떨어진 노드는 자동으로 고립된 객체가 되어 가비지 컬렉션의 대상이 된다.
-
+    //
     private Node<E> node;
-    public MyLinkedList(){
-        node = null; // node를 널값으로 초기화해준다.
-    };
 
+    public MyLinkedList(){
+        //
+        node = new Node<>();
+    }
 
     @Override
     public int size() {
+        //
         int i = 0;
         Node<E> current = node;
-        // node 를 대신해서 동일한 값이 들어가는 current 를 선언해주면
-        // 컴파일러로 하여금 첫 노드 값이 null 일때도 안정적으로 이를 검사하고 핸들링할 수 있게 해준다.
-        // while 문에서 .연산자로 getNext()를 호출했을때 NullPointException 이 뜨는 오류를 방지할 수 있다.
-        while (current !=null){
+        while (current != null){
             current = current.getNext();
             i++;
         }
@@ -26,10 +22,11 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public boolean contains(Object object) {
-        Iterator<E> iterator = iterator();
+    public boolean contains(E element) {
+        //
+        MyIterator<E> iterator = iterator();
         while (iterator.hasNext()){
-            if(iterator.next().equals(object)) {
+            if(iterator.next().equals(element)) {
                 return true;
             }
         }
@@ -38,28 +35,30 @@ public class MyLinkedList<E> implements MyListInterface<E>{
 
     @Override
     public MyIterator<E> iterator() {
+        //
         return new MyIterator<>(this);
     }
 
     @Override
     public boolean empty() {
+        //
         return node == null;
     }
 
     @Override
     public void add(E element) {
-        Node<E> newNode = new Node<>(null, element); //값을 담고 다음 노드가 없는 새 노드를 만든다.
-        //이게 첫 add 인 경우
+        //
+        Node<E> newNode = new Node<>(null, element);
         if(node == null){
             node = newNode;
-        }
-        else {//이미 있는 노드에 추가하는 경우
+        } else {
         Node current = getLastNode();
             current.setNext(newNode);
         }
     }
 
     private Node<E> getLastNode(){
+        //
         Node<E> current = node;
         while (current !=null && current.getNext() != null){
             current = current.getNext();
@@ -68,15 +67,17 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     private Node<E> getIndexingNode(int index){
+        //
         indexBoundChecker(index);
-        Node<E> indexingNode = node;
+        Node<E> indexNode = node;
         for (int i = 0; i < index; i++) {
-            indexingNode = indexingNode.getNext();
+            indexNode = indexNode.getNext();
         }
-        return indexingNode;
+        return indexNode;
     }
 
     private void indexBoundChecker(int index){
+        //
         if (index < 0 || index > size()) {
             throw new IndexOutOfBoundsException();
         }
@@ -84,22 +85,18 @@ public class MyLinkedList<E> implements MyListInterface<E>{
 
     @Override
     public void add(int index, E element) {
-        //인덱스가 오류인 경우
+        //
         indexBoundChecker(index);
-        //맨 첫번째 노드에 삽입하는 경우
         if(index == 0){
             node = new Node<>(node, element); // 현재의 node(첫번째 노드)를 다음 노드로 하는 새 노드를 만든다.
-            //어떤 메소드에서도 node 를 명시적으로 다른 번째 노드로 바꾸고 있지 않기 때문에, 늘 node 는 첫번째 노드를 가리킨다.
-        }
-        //2번째 이상의 노드에 삽입하는 경우
-        else {
+        } else {
             Node<E> currentNode = getIndexingNode(index);
             currentNode.setNext(new Node<>(currentNode.getNext(), element));
         }
-
     }
 
     public E set(int index, E element) {
+        //
         Node<E> beforeNode = getIndexingNode(index-1);
         Node<E> newTailNode = beforeNode.getNext().getNext();
         Node<E> newNode = new Node<E>(newTailNode, element); //newTailNode를 꼬리로 하는 새 노드를 만들고, 이걸 연결함
@@ -108,12 +105,13 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public void remove(Object object) {
+    public void remove(E element) {
+        //
         Node<E> current = node;
-        while (current.getNext() != null) { // make sure current's next node isn't null
-            if (current.getNext().getContent().equals(object)) {
+        while (current.getNext() != null) {
+            if (current.getNext().getContent().equals(element)) {
                 current.setNext(current.getNext().getNext());
-                break; // stop after removing the first matching element
+                break;
             }
             current = current.getNext();
         }
@@ -121,46 +119,48 @@ public class MyLinkedList<E> implements MyListInterface<E>{
 
     @Override
     public void remove(int index) {
+        //
         indexBoundChecker(index);
         Node<E> removeNode = getIndexingNode(index);
         if (index == 0) {
             node = node.getNext(); //다음(두번째) 노드를 첫번째로 바꿔버림
-        }
-        else{
+        } else{
             Node<E> beforeNode = getIndexingNode(index -1);
             beforeNode.setNext(removeNode.getNext());
         }
     }
 
     @Override
-    public void addAll(MyListInterface<? extends E> collection) {
-        for (int i = 0; i < collection.size(); i++) {
-            add(collection.get(i));
+    public void addAll(MyListInterface<? extends E> myList) {
+        //
+        for (int i = 0; i < myList.size(); i++) {
+            add(myList.get(i));
         }
     }
 
     @Override
     public void clear() {
+        //
         node = null;
     }
 
     @Override
     public <T> T[] toArray(T[] some) {
-        //list를 T[]타입 배열로 변환해서 리턴 : 먼저 사이즈에 맞는 타입캐스팅된 배열을 메소드 외부에서 생성한 다음, 거기에 리스트 안의 원소를 담아서 리턴한다.
+        //
         int size = size();
         if (some.length < size) {
             some = Arrays.copyOf(some, size);
         }
         int i = 0;
         for (Node<E> firstNode = node; firstNode != null ; firstNode = firstNode.getNext()) {
-            some[i++] = (T) firstNode.getContent(); //not perfectly type-safe, but original JAVA remain it as runtime exception too. (I checked it!)
+            some[i++] = (T) firstNode.getContent();
         }
-
         return some;
     }
 
     @Override
     public E get(int index) {
-       return getIndexingNode(index).getContent();
+        //
+        return getIndexingNode(index).getContent();
     }
 }
