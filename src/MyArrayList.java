@@ -2,46 +2,43 @@ import java.util.Arrays;
 
 public class MyArrayList<E> implements MyListInterface<E>{
     //
-    private final int ARRAY_START_NUMBER = 10;
+    private final int ARRAY_START_LENGTH = 10;
     private Object[] arr;
     private int currentArrayLength;
+    private int currentListSize;
 
     public MyArrayList(){
         //
-        arr = new Object[ARRAY_START_NUMBER];
+        this.arr = new Object[ARRAY_START_LENGTH];
         this.currentArrayLength =arr.length;
+        this.currentListSize = 0;
     }
-    public MyArrayList(int arrayStartNumber) {
+    public MyArrayList(int arrayStartLength) {
         //
-        if(arrayStartNumber <= 0){
+        if(arrayStartLength <= 0){
             throw new IndexOutOfBoundsException("Array Length should be larger than 0.");
         }
-        arr = new Object[arrayStartNumber];
-        currentArrayLength = arr.length;
+        this.arr = new Object[arrayStartLength];
+        this.currentArrayLength = arr.length;
+        this.currentListSize = 0;
     }
 
     @Override
     public int size() {
         //
-        for (int i = 0; i < currentArrayLength; i++) {
-            if (arr[i] == null) {
-                return i;
-            }
-        }
-        return currentArrayLength;
+        return currentListSize;
     }
 
     @Override
-    public boolean empty() {
+    public boolean isEmpty() {
         //
-        //not thread-safe but this code is focused on simplifying.
-        return arr[0] == null;
+        return currentListSize == 0;
     }
 
     @Override
     public MyIterator<E> iterator() {
         //
-        return new MyIterator<E>(this);
+        return new MyIterator<>(this);
     }
 
     @Override
@@ -60,23 +57,22 @@ public class MyArrayList<E> implements MyListInterface<E>{
     @Override
     public void add(E element) {
         //
-        if (size() >= currentArrayLength) {
+        if (currentListSize >= currentArrayLength) {
             resizeArray();
         }
-        arr[size()] = element;
+        arr[currentListSize++] = element;
     }
 
     private void resizeArray(){
         //
         Object[] newArr = new Object[currentArrayLength *2];
-        int i = 0;
         System.arraycopy(arr, 0, newArr, 0, currentArrayLength);
-        //arr 의 0번부터 currentArrayLength 까지 복사해서, newArr 의 0번부터 담는다 의 의미.
+        //arr 의 0번부터  복사해서, newArr 의 0번부터 currentArrayLength 까지 담는다 의 의미.
         arr = newArr;
         currentArrayLength = arr.length;
     }
 
-    private void indexBoundChecker(int index){
+    private void checkIndexBound(int index){
         //
         if (index < 0 || index > size()) {
             throw new IndexOutOfBoundsException();
@@ -86,15 +82,16 @@ public class MyArrayList<E> implements MyListInterface<E>{
     @Override
     public void add(int index, E element) {
         //
-        indexBoundChecker(index);
-        if (size() >= currentArrayLength) {
+        checkIndexBound(index);
+        if (currentListSize >= currentArrayLength) {
             resizeArray();
         }
-        moveRight(size(), arr, index);
+        moveRight( index, currentListSize);
         arr[index] = element;
+        currentListSize++;
     }
 
-    private void moveRight(int originalSize, Object[] arr, int index) {
+    private void moveRight(int index,  int originalSize) {
         //
         for (; originalSize > index ; originalSize--) {
             arr[originalSize] = arr[originalSize - 1];
@@ -104,8 +101,8 @@ public class MyArrayList<E> implements MyListInterface<E>{
     @Override
     public E get(int index) {
         //
-        indexBoundChecker(index);
-        return (E)(arr[index]);
+        checkIndexBound(index);
+        return (E)arr[index];
     }
 
     @Override
@@ -126,6 +123,7 @@ public class MyArrayList<E> implements MyListInterface<E>{
         }
         if(found) {
             moveLeft(index, originalSize);
+            currentListSize--;
         }
     }
     private void moveLeft(int index, int originalSize) {
@@ -133,41 +131,42 @@ public class MyArrayList<E> implements MyListInterface<E>{
         for (int i = index; i < originalSize-1; i++) {
             arr[i] = arr[i+1];
         }
-        arr[originalSize - 1] = null; // set the last element to null
+        arr[originalSize - 1] = null;
     }
 
     @Override
     public void remove(int index) {
         //
-        indexBoundChecker(index);
+        checkIndexBound(index);
         int originalSize = size();
         if(index < originalSize -1){
             arr[index] = null;
             moveLeft(index, originalSize);
+        } else {
+            arr[index] = null;
         }
-        else {
-            arr[index] = null; // set the last element to null
-        }
+        currentListSize--;
     }
 
     @Override
     public void addAll(MyListInterface<? extends E> myList) {
         //
-        int requiredArraySize = size() + myList.size();
-        E[] newArr = (E[]) new Object[requiredArraySize];
+        int requiredArraySize = currentListSize + myList.size();
+        Object[] newArr = new Object[requiredArraySize];
 
         System.arraycopy(arr, 0, newArr, 0, currentArrayLength);
-        System.arraycopy(myList.toArray((E[]) new Object[myList.size()]),
-                0, newArr, size(), myList.size());
+        System.arraycopy(myList.toArray(newArr),0, newArr, size(), myList.size());
         arr = newArr;
         currentArrayLength = arr.length;
+        currentListSize = currentArrayLength+ myList.size();
     }
 
     @Override
     public void clear() {
         //
-        arr = new Object[ARRAY_START_NUMBER];
+        arr = new Object[ARRAY_START_LENGTH];
         currentArrayLength = arr.length;
+        currentListSize = 0;
     }
 
     @Override

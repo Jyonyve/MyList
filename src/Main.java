@@ -8,10 +8,10 @@ public class Main {
         runTestMyLists();
     }
 
-    private static void printList(MyLinkedList myLinkedList, MyArrayList myArrayList){
+    private static void printList(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
         System.out.println("------------MyLinkedList-----------");
-        Iterator iterator = myLinkedList.iterator();
+        Iterator<String> iterator = myLinkedList.iterator();
         int index = 0;
         while (iterator.hasNext()) {
             System.out.println(index + " : " + iterator.next());
@@ -27,7 +27,7 @@ public class Main {
         System.out.println("\n********* List Finished *********\n");
     }
 
-    private static void addByElement(MyLinkedList myLinkedList, MyArrayList myArrayList){
+    private static void addByElement(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
         myLinkedList.add("JDM");
         myLinkedList.add("STS");
@@ -57,16 +57,16 @@ public class Main {
         myArrayList.add("KKH");
     }
 
-    private static void addByIndex(MyLinkedList myLinkedList, MyArrayList myArrayList){
+    private static void addByIndex(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
-        myLinkedList.add(0, "The First SLAMDUNK");
+        myLinkedList.add(0, "The First SLAM DUNK");
         myLinkedList.add(5,"KJH");
 
         myArrayList.add(0, "BasketBall");
         myArrayList.add(1, "BS");
         myArrayList.add(2, "SW");
     }
-    private static void removeByElementOrIndex(MyLinkedList myLinkedList, MyArrayList myArrayList){
+    private static void removeByElementOrIndex(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
         myLinkedList.remove("LHN");
         myLinkedList.remove(7);
@@ -74,34 +74,34 @@ public class Main {
         myArrayList.remove("KEJ");
         myArrayList.remove(11);
     }
-    private static void containsCheck(MyLinkedList myLinkedList, MyArrayList myArrayList){
+    private static void containsCheck(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
         System.out.println("방금 지운 LHN의 값이 있나요?: " + myLinkedList.contains("LHN"));
-        System.out.println("방금 지운 index 7(CSY)의 값이 있나요?: " + myLinkedList.contains("CSY"));
-        System.out.println("지우지 않은 JDM의 값이 있나요?: " + myLinkedList.contains("JDM"));
+        System.out.println("방금 지운 index 7(CSY)의 값이 있나요?: " + myLinkedList.contains("CSY") + "\n");
+        System.out.println("지우지 않은 JDM의 값이 있나요?: " + myLinkedList.contains("JDM")+ "\n");
 
         System.out.println("방금 지운 KEJ의 값이 있나요?: " + myArrayList.contains("KEJ"));
-        System.out.println("방금 지운 index 11의 값(AHS)이 있나요?: " + myArrayList.contains("AHS") );
+        System.out.println("방금 지운 index 11의 값(AHS)이 있나요?: " + myArrayList.contains("AHS")+ "\n" );
         System.out.println("지우지 않은 KKH의 값이 있나요?: " + myArrayList.contains("KKH")+"\n");
     }
-    private static void addAllByInterface(MyLinkedList myLinkedList, MyArrayList myArrayList){
+    private static void addAllByInterface(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
         myLinkedList.addAll(myArrayList);
         myArrayList.addAll(myLinkedList);
     }
 
-    private static <E> E[] myArrayListToArray(MyArrayList myArrayList){
+    private static <E> E[] myArrayListToArray(MyArrayList<String> myArrayList){
         //
         Object[] arrArrayList = new Object[myArrayList.size()];
-        arrArrayList = (E[]) myArrayList.toArray(arrArrayList);
+        arrArrayList = myArrayList.toArray(arrArrayList);
         return (E[])arrArrayList;
     }
 
-    private static <E> E[] myLinkedListToArray(MyLinkedList myLinkedList){
+    private static String[] myLinkedListToArray(MyLinkedList<String> myLinkedList){
         //
-        Object[] arrLinkedList = new Object[3];
-        arrLinkedList = (E[]) myLinkedList.toArray(arrLinkedList);
-        return (E[])arrLinkedList;
+        String[] arrLinkedList = new String[3];
+        arrLinkedList = myLinkedList.toArray(arrLinkedList);
+        return arrLinkedList;
     }
 
     private static <E> void printMyListToArray(E[] arrArrayList, E[] arrLinkedList){
@@ -115,10 +115,10 @@ public class Main {
         System.out.println("arrLinkedList length : " + arrLinkedList.length);
     }
 
-    private static void isMyListEmpty(MyLinkedList myLinkedList, MyArrayList myArrayList){
+    private static void isMyListEmpty(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
-        System.out.println("myLinkedList가 비어 있나요? empty() : " + myLinkedList.empty());
-        System.out.println("myArrayList가 비어 있나요? empty() : " + myArrayList.empty());
+        System.out.println("myLinkedList가 비어 있나요? : " + myLinkedList.isEmpty());
+        System.out.println("myArrayList가 비어 있나요? : " + myArrayList.isEmpty());
     }
 
     private static <E> void runTestMyLists(){
@@ -144,9 +144,8 @@ public class Main {
         printList(myLinkedList, myArrayList);
 
         System.out.println("\n\t5. toArray로 만든 배열 출력 ");
-        E[] arrLinkedList = myLinkedListToArray(myLinkedList);
-        E[] arrArrayList = myArrayListToArray(myArrayList);
-        printMyListToArray(arrArrayList, arrLinkedList);
+        printMyListToArray(myArrayListToArray(myArrayList),
+                            myLinkedListToArray(myLinkedList));
 
         System.out.println("\n\t6. 리스트 클리어 후 리스트 출력 ");
         isMyListEmpty(myLinkedList, myArrayList);

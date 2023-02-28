@@ -3,22 +3,18 @@ import java.util.Arrays;
 public class MyLinkedList<E> implements MyListInterface<E>{
     //
     private Node<E> node;
+    private int currentListSize;
 
     public MyLinkedList(){
         //
-        node = new Node<>();
+        this.node = null;
+        this.currentListSize = 0;
     }
 
     @Override
     public int size() {
         //
-        int i = 0;
-        Node<E> current = node;
-        while (current != null){
-            current = current.getNext();
-            i++;
-        }
-        return i;
+        return currentListSize;
     }
 
     @Override
@@ -40,21 +36,15 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public boolean empty() {
+    public boolean isEmpty() {
         //
-        return node == null;
+        return currentListSize == 0;
     }
 
     @Override
     public void add(E element) {
         //
-        Node<E> newNode = new Node<>(null, element);
-        if(node == null){
-            node = newNode;
-        } else {
-        Node current = getLastNode();
-            current.setNext(newNode);
-        }
+        add(currentListSize, element);
     }
 
     private Node<E> getLastNode(){
@@ -66,9 +56,9 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         return current;
     }
 
-    private Node<E> getIndexingNode(int index){
+    private Node<E> getIndexNode(int index){
         //
-        indexBoundChecker(index);
+        checkIndexBound(index);
         Node<E> indexNode = node;
         for (int i = 0; i < index; i++) {
             indexNode = indexNode.getNext();
@@ -76,7 +66,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         return indexNode;
     }
 
-    private void indexBoundChecker(int index){
+    private void checkIndexBound(int index){
         //
         if (index < 0 || index > size()) {
             throw new IndexOutOfBoundsException();
@@ -86,20 +76,21 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     @Override
     public void add(int index, E element) {
         //
-        indexBoundChecker(index);
+        checkIndexBound(index);
         if(index == 0){
-            node = new Node<>(node, element); // 현재의 node(첫번째 노드)를 다음 노드로 하는 새 노드를 만든다.
+            node = new Node<>(node, element);
         } else {
-            Node<E> currentNode = getIndexingNode(index);
+            Node<E> currentNode = getIndexNode(index);
             currentNode.setNext(new Node<>(currentNode.getNext(), element));
         }
+        currentListSize++;
     }
 
     public E set(int index, E element) {
         //
-        Node<E> beforeNode = getIndexingNode(index-1);
+        Node<E> beforeNode = getIndexNode(index-1);
         Node<E> newTailNode = beforeNode.getNext().getNext();
-        Node<E> newNode = new Node<E>(newTailNode, element); //newTailNode를 꼬리로 하는 새 노드를 만들고, 이걸 연결함
+        Node<E> newNode = new Node<>(newTailNode, element);
         beforeNode.setNext(newNode);
         return newNode.getContent();
     }
@@ -115,19 +106,21 @@ public class MyLinkedList<E> implements MyListInterface<E>{
             }
             current = current.getNext();
         }
+        currentListSize--;
     }
 
     @Override
     public void remove(int index) {
         //
-        indexBoundChecker(index);
-        Node<E> removeNode = getIndexingNode(index);
+        checkIndexBound(index);
+        Node<E> removeNode = getIndexNode(index);
         if (index == 0) {
             node = node.getNext(); //다음(두번째) 노드를 첫번째로 바꿔버림
         } else{
-            Node<E> beforeNode = getIndexingNode(index -1);
+            Node<E> beforeNode = getIndexNode(index -1);
             beforeNode.setNext(removeNode.getNext());
         }
+        currentListSize--;
     }
 
     @Override
@@ -136,31 +129,47 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         for (int i = 0; i < myList.size(); i++) {
             add(myList.get(i));
         }
+        currentListSize = currentListSize + myList.size();
     }
 
     @Override
     public void clear() {
         //
         node = null;
+        currentListSize = 0;
+    }
+
+    private <T> T[] increaseArrayCapacity(T[] some){
+        //
+        if (some.length < currentListSize) {
+            some = Arrays.copyOf(some, currentListSize);
+        }
+        return some;
+    }
+
+    private <T> T[] decreaseArrayCapacity(T[] some){
+        //
+        if(some.length > currentListSize){
+            some[currentListSize] = null;
+        }
+        return some;
     }
 
     @Override
     public <T> T[] toArray(T[] some) {
         //
-        int size = size();
-        if (some.length < size) {
-            some = Arrays.copyOf(some, size);
-        }
+        some = increaseArrayCapacity(some);
         int i = 0;
         for (Node<E> firstNode = node; firstNode != null ; firstNode = firstNode.getNext()) {
             some[i++] = (T) firstNode.getContent();
         }
+        some = decreaseArrayCapacity(some);
         return some;
     }
 
     @Override
     public E get(int index) {
         //
-        return getIndexingNode(index).getContent();
+        return getIndexNode(index).getContent();
     }
 }

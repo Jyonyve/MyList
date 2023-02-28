@@ -1,7 +1,7 @@
 
 public interface MyListInterface<E> {
     int size();
-    boolean empty();
+    boolean isEmpty();
     boolean contains(E element);
     MyIterator<E> iterator();
     void add(E element);
@@ -11,6 +11,6 @@ public interface MyListInterface<E> {
     void remove(int index);
     void addAll(MyListInterface<? extends E> myList);
     void clear();
-    <T> T[] toArray(T[] some); //to not type-casting every time
+    <T> T[] toArray(T[] some);
 
 }

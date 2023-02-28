@@ -1,4 +1,4 @@
-public class Node<E> { //Node<E>로 하면 제네릭 타입을 선언할 수 있다!
+public class Node<E> {
     //
     private Node<E> next;
     private E content;
