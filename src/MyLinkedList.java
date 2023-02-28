@@ -75,16 +75,16 @@ public class MyLinkedList<E> implements MyListInterface<E>{
 
     @Override
     public void add(int index, E element) {
-        //
         checkIndexBound(index);
-        if(index == 0){
+        if (index == 0) {
             node = new Node<>(node, element);
         } else {
-            Node<E> currentNode = getIndexNode(index);
-            currentNode.setNext(new Node<>(currentNode.getNext(), element));
+            Node<E> prev = getIndexNode(index - 1);
+            prev.setNext(new Node<>(prev.getNext(), element));
         }
         currentListSize++;
     }
+
 
     public E set(int index, E element) {
         //
@@ -108,6 +108,24 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         }
         currentListSize--;
     }
+//    public void remove(E element) {
+//        Node<E> prev = null;
+//        Node<E> current = node;
+//        while (current != null) {
+//            if (current.getContent().equals(element)) {
+//                if (prev == null) {
+//                    node = current.getNext();
+//                } else {
+//                    prev.setNext(current.getNext());
+//                }
+//                currentListSize--;
+//                return;
+//            }
+//            prev = current;
+//            current = current.getNext();
+//        }
+//    }
+
 
     @Override
     public void remove(int index) {
@@ -147,7 +165,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         return some;
     }
 
-    private <T> T[] decreaseArrayCapacity(T[] some){
+    private <T> T[] setRemainArrayNull(T[] some){
         //
         if(some.length > currentListSize){
             some[currentListSize] = null;
@@ -158,12 +176,12 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     @Override
     public <T> T[] toArray(T[] some) {
         //
-        some = increaseArrayCapacity(some);
+        some = Arrays.copyOf(some, currentListSize);
         int i = 0;
-        for (Node<E> firstNode = node; firstNode != null ; firstNode = firstNode.getNext()) {
-            some[i++] = (T) firstNode.getContent();
+        for (Node<E> current = node; current != null; current = current.getNext()) {
+            some[i++] = (T) current.getContent();
         }
-        some = decreaseArrayCapacity(some);
+        some = setRemainArrayNull(some);
         return some;
     }
 

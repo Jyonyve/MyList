@@ -3,10 +3,10 @@ public class Node<E> {
     private Node<E> next;
     private E content;
 
-    public Node() {
+    public Node(E content) {
         //
         this.next = null;
-        this.content = null;
+        this.content = content;
     }
 
     public Node(Node<E> next, E content) {
