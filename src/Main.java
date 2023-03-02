@@ -123,7 +123,7 @@ public class Main {
     private static <E> void runTestMyLists(){
         //
         MyLinkedList<String> myLinkedList = new MyLinkedList<>();
-        MyArrayList<String> myArrayList= new MyArrayList<>();
+        MyArrayList<String> myArrayList= new MyArrayList<>(20);
 
         System.out.println("\n\t1. 기본 리스트 출력 ");
         addByElement(myLinkedList, myArrayList);
