@@ -108,8 +108,7 @@ public class MyArrayList<E> implements MyListInterface<E>{
     @Override
     public void remove(E element) {
         //
-        int index = 0;        //지우기 위해 null 로 세팅하는 순간 size()값이 변한다. 미리 size()를 픽스해 내려준다.
-        int originalSize = size();
+        int index = 0;
         MyIterator<E> iterator = iterator();
         boolean found = false;
 
@@ -122,7 +121,7 @@ public class MyArrayList<E> implements MyListInterface<E>{
             index++;
         }
         if(found) {
-            moveLeft(index, originalSize);
+            moveLeft(index, currentListSize);
             currentListSize--;
         }
     }
