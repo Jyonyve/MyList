@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.Iterator;
 
 public class Main {
 
@@ -11,7 +10,7 @@ public class Main {
     private static void printList(MyLinkedList<String> myLinkedList, MyArrayList<String> myArrayList){
         //
         System.out.println("------------MyLinkedList-----------");
-        Iterator<String> iterator = myLinkedList.iterator();
+        MyIterator<String> iterator = myLinkedList.iterator();
         int index = 0;
         while (iterator.hasNext()) {
             System.out.println(index + " : " + iterator.next());
@@ -97,11 +96,11 @@ public class Main {
         return (E[])arrArrayList;
     }
 
-    private static String[] myLinkedListToArray(MyLinkedList<String> myLinkedList){
+    private static <E> E[] myLinkedListToArray(MyLinkedList<String> myLinkedList){
         //
         String[] arrLinkedList = new String[3];
         arrLinkedList = myLinkedList.toArray(arrLinkedList);
-        return arrLinkedList;
+        return (E[]) arrLinkedList;
     }
 
     private static <E> void printMyListToArray(E[] arrArrayList, E[] arrLinkedList){

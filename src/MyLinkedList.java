@@ -47,15 +47,6 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         add(currentListSize, element);
     }
 
-    private Node<E> getLastNode(){
-        //
-        Node<E> current = node;
-        while (current !=null && current.getNext() != null){
-            current = current.getNext();
-        }
-        return current;
-    }
-
     private Node<E> getIndexNode(int index){
         //
         checkIndexBound(index);
@@ -85,21 +76,11 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         currentListSize++;
     }
 
-
-    public E set(int index, E element) {
-        //
-        Node<E> beforeNode = getIndexNode(index-1);
-        Node<E> newTailNode = beforeNode.getNext().getNext();
-        Node<E> newNode = new Node<>(newTailNode, element);
-        beforeNode.setNext(newNode);
-        return newNode.getContent();
-    }
-
     @Override
     public void remove(E element) {
         //
         Node<E> current = node;
-        while (current.getNext() != null) {
+        while (!isEmpty()) {
             if (current.getNext().getContent().equals(element)) {
                 current.setNext(current.getNext().getNext());
                 break;
@@ -108,24 +89,6 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         }
         currentListSize--;
     }
-//    public void remove(E element) {
-//        Node<E> prev = null;
-//        Node<E> current = node;
-//        while (current != null) {
-//            if (current.getContent().equals(element)) {
-//                if (prev == null) {
-//                    node = current.getNext();
-//                } else {
-//                    prev.setNext(current.getNext());
-//                }
-//                currentListSize--;
-//                return;
-//            }
-//            prev = current;
-//            current = current.getNext();
-//        }
-//    }
-
 
     @Override
     public void remove(int index) {
@@ -144,10 +107,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     @Override
     public void addAll(MyListInterface<? extends E> myList) {
         //
-        for (int i = 0; i < myList.size(); i++) {
-            add(myList.get(i));
-        }
-        currentListSize = currentListSize + myList.size();
+        myList.iterator().forEachRemaining(this::add);
     }
 
     @Override
@@ -155,22 +115,6 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         //
         node = null;
         currentListSize = 0;
-    }
-
-    private <T> T[] increaseArrayCapacity(T[] some){
-        //
-        if (some.length < currentListSize) {
-            some = Arrays.copyOf(some, currentListSize);
-        }
-        return some;
-    }
-
-    private <T> T[] setRemainArrayNull(T[] some){
-        //
-        if(some.length > currentListSize){
-            some[currentListSize] = null;
-        }
-        return some;
     }
 
     @Override
@@ -181,7 +125,6 @@ public class MyLinkedList<E> implements MyListInterface<E>{
         for (Node<E> current = node; current != null; current = current.getNext()) {
             some[i++] = (T) current.getContent();
         }
-        some = setRemainArrayNull(some);
         return some;
     }
 

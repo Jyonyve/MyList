@@ -158,7 +158,7 @@ public class MyArrayList<E> implements MyListInterface<E>{
         System.arraycopy(myList.toArray(newArr),0, newArr, size(), myList.size());
         arr = newArr;
         currentArrayLength = arr.length;
-        currentListSize = currentArrayLength+ myList.size();
+        currentListSize += myList.size();
     }
 
     @Override
