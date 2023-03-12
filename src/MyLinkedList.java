@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class MyLinkedList<E> implements MyListInterface<E>{
+public class MyLinkedList<E> implements MyList<E> {
     //
     private Node<E> node;
     private int currentListSize;
@@ -105,7 +105,7 @@ public class MyLinkedList<E> implements MyListInterface<E>{
     }
 
     @Override
-    public void addAll(MyListInterface<? extends E> myList) {
+    public void addAll(MyList<? extends E> myList) {
         //
         myList.iterator().forEachRemaining(this::add);
     }

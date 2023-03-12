@@ -3,28 +3,27 @@ import java.util.NoSuchElementException;
 
 public class MyIterator<E> implements Iterator<E> {
     //
-    private final MyListInterface<E> list;
-    private int pointer;
+    private MyList<E> list;
+    private int index;
+    private int length;
 
-    MyIterator(MyListInterface<E> list) {
+    MyIterator(MyList<E> list) {
+        //
         this.list = list;
-        this.pointer = -1;      //포인터가 -1이어야지만 인덱스가 0일때 가지고있는 값 1개가 도출됨.
+        this.index = 0;
+        this.length = list.size();
     }
 
     @Override
     public boolean hasNext() {
         //
-        return pointer < list.size()-1 ;
+        return index < length;
     }
 
     @Override
     public E next() {
-        try {
-            E e = list.get(++pointer);
-            return e;
-        } catch (NoSuchElementException exception){
-            throw exception;
-        }
+        //
+        //System.arraycopy();     //list를 COPY
+        return list.get(index++);
     }
-
 }

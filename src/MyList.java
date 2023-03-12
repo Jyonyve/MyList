@@ -1,5 +1,5 @@
 
-public interface MyListInterface<E> {
+public interface MyList<E> {
     int size();
     boolean isEmpty();
     boolean contains(E element);
@@ -9,8 +9,7 @@ public interface MyListInterface<E> {
     E get(int index);
     void remove(E element);
     void remove(int index);
-    void addAll(MyListInterface<? extends E> myList);
+    void addAll(MyList<? extends E> myList);
     void clear();
     <T> T[] toArray(T[] some);
-
 }

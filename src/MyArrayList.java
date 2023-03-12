@@ -1,38 +1,37 @@
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
-public class MyArrayList<E> implements MyListInterface<E>{
+public class MyArrayList<E> implements MyList<E> {
     //
-    private final int ARRAY_START_LENGTH = 10;
-    private Object[] arr;
-    private int currentArrayLength;
-    private int currentListSize;
+    private final int INITIAL_CAPACITY = 10;
+
+    private Object[] elements;     //elements
+    private int length;
+    private int capacity;
 
     public MyArrayList(){
         //
-        this.arr = new Object[ARRAY_START_LENGTH];
-        this.currentArrayLength =arr.length;
-        this.currentListSize = 0;
+        initialize(INITIAL_CAPACITY);
     }
-    public MyArrayList(int arrayStartLength) {
+
+    public MyArrayList(int initialCapacity) {
         //
-        if(arrayStartLength <= 0){
-            throw new IndexOutOfBoundsException("Array Length should be larger than 0.");
+        if(initialCapacity <= 0){
+            throw new IllegalArgumentException("Initial capacity should be larger than 0: " + initialCapacity);
         }
-        this.arr = new Object[arrayStartLength];
-        this.currentArrayLength = arr.length;
-        this.currentListSize = 0;
+        initialize(initialCapacity);
     }
 
     @Override
     public int size() {
         //
-        return currentListSize;
+        return length;
     }
 
     @Override
     public boolean isEmpty() {
         //
-        return currentListSize == 0;
+        return length == 0;
     }
 
     @Override
@@ -44,10 +43,8 @@ public class MyArrayList<E> implements MyListInterface<E>{
     @Override
     public boolean contains(E element) {
         //
-        MyIterator<E> iterator = iterator();
-        while (iterator.hasNext()){
-            E elementInList = iterator.next();
-            if (elementInList.equals(element)) {
+        for(int index = 0 ; index < length ; index++){
+            if (elements[index].equals(element)) {
                 return true;
             }
         }
@@ -57,19 +54,123 @@ public class MyArrayList<E> implements MyListInterface<E>{
     @Override
     public void add(E element) {
         //
-        if (currentListSize >= currentArrayLength) {
-            resizeArray();
+        if (length >= capacity) {
+            increaseCapacity();
         }
-        arr[currentListSize++] = element;
+
+        elements[length++] = element;
     }
 
-    private void resizeArray(){
+    @Override
+    public void add(int index, E element) {
         //
-        Object[] newArr = new Object[currentArrayLength *2];
-        System.arraycopy(arr, 0, newArr, 0, currentArrayLength);
-        //arr 의 0번부터  복사해서, newArr 의 0번부터 currentArrayLength 까지 담는다 의 의미.
-        arr = newArr;
-        currentArrayLength = arr.length;
+        checkIndexBound(index);
+
+        if (length >= capacity) {
+            increaseCapacity();
+        }
+
+        shiftRight(index, length);
+        elements[index] = element;
+        length++;
+    }
+
+    @Override
+    public E get(int index) {
+        //
+        checkIndexBound(index);
+        return (E) elements[index];
+    }
+
+    @Override
+    public void remove(E element) {
+        //
+        int targetIndex = indexOf(element);
+
+        shiftLeft(targetIndex);
+        capacity--;
+    }
+
+    private int indexOf(E element){
+        //
+        for(int index = 0 ; index < length ; index++){
+            if(elements[index].equals(element)){
+                return index;
+            }
+        }
+
+        throw new NoSuchElementException("Element: " + element);
+    }
+
+    private void shiftLeft(int index) {
+        //
+        for (int i = index; i < length-1; i++) {
+            elements[i] = elements[i+1];
+        }
+        elements[length - 1] = null;
+    }
+
+    @Override
+    public void remove(int index) {
+        //
+        checkIndexBound(index);
+
+        if(index < length -1){
+            shiftLeft(index);
+        } else {
+            elements[index] = null;
+        }
+        capacity--;
+    }
+
+    @Override
+    public void addAll(MyList<? extends E> myList) {
+        //
+        int requiredArraySize = length + myList.size();
+        Object[] newArr = new Object[requiredArraySize];
+
+        System.arraycopy(elements, 0, newArr, 0, length);
+        System.arraycopy(myList.toArray(newArr),0, newArr, size(), myList.size());
+
+        elements = newArr;
+        length = elements.length;
+        capacity += myList.size();
+    }
+
+    @Override
+    public void clear() {
+        //
+        initialize(INITIAL_CAPACITY);
+    }
+
+    @Override
+    public <T> T[] toArray(T[] target) {
+        //
+        int targetLength = length;
+
+        if (target.length < targetLength) {
+            target = Arrays.copyOf(target, targetLength);
+        }
+
+        System.arraycopy(elements, 0, target, 0, targetLength);
+        return target;
+    }
+
+    private void initialize(int capacity){
+        //
+        this.elements = new Object[capacity];
+        this.length = 0;
+        this.capacity = capacity;
+    }
+
+    private void increaseCapacity(){
+        //
+        int newCapacity = capacity * 2;
+        Object[] newElements = new Object[newCapacity];
+        System.arraycopy(elements, 0, newElements, 0, length);
+
+        elements = newElements;
+        capacity = newCapacity;
     }
 
     private void checkIndexBound(int index){
@@ -79,103 +180,10 @@ public class MyArrayList<E> implements MyListInterface<E>{
         }
     }
 
-    @Override
-    public void add(int index, E element) {
-        //
-        checkIndexBound(index);
-        if (currentListSize >= currentArrayLength) {
-            resizeArray();
-        }
-        moveRight( index, currentListSize);
-        arr[index] = element;
-        currentListSize++;
-    }
-
-    private void moveRight(int index,  int originalSize) {
+    private void shiftRight(int index, int originalSize) {
         //
         for (; originalSize > index ; originalSize--) {
-            arr[originalSize] = arr[originalSize - 1];
+            elements[originalSize] = elements[originalSize - 1];
         }
-    }
-
-    @Override
-    public E get(int index) {
-        //
-        checkIndexBound(index);
-        return (E)arr[index];
-    }
-
-    @Override
-    public void remove(E element) {
-        //
-        int index = 0;
-        MyIterator<E> iterator = iterator();
-        boolean found = false;
-
-        while (iterator.hasNext()){
-            if (arr[index].equals(element)){
-                arr[index] = null;
-                found = true;
-                break;
-            }
-            index++;
-        }
-        if(found) {
-            moveLeft(index, currentListSize);
-            currentListSize--;
-        }
-    }
-    private void moveLeft(int index, int originalSize) {
-        //
-        for (int i = index; i < originalSize-1; i++) {
-            arr[i] = arr[i+1];
-        }
-        arr[originalSize - 1] = null;
-    }
-
-    @Override
-    public void remove(int index) {
-        //
-        checkIndexBound(index);
-        int originalSize = size();
-        if(index < originalSize -1){
-            arr[index] = null;
-            moveLeft(index, originalSize);
-        } else {
-            arr[index] = null;
-        }
-        currentListSize--;
-    }
-
-    @Override
-    public void addAll(MyListInterface<? extends E> myList) {
-        //
-        int requiredArraySize = currentListSize + myList.size();
-        Object[] newArr = new Object[requiredArraySize];
-
-        System.arraycopy(arr, 0, newArr, 0, currentArrayLength);
-        System.arraycopy(myList.toArray(newArr),0, newArr, size(), myList.size());
-        arr = newArr;
-        currentArrayLength = arr.length;
-        currentListSize += myList.size();
-    }
-
-    @Override
-    public void clear() {
-        //
-        arr = new Object[ARRAY_START_LENGTH];
-        currentArrayLength = arr.length;
-        currentListSize = 0;
-    }
-
-    @Override
-    public <T> T[] toArray(T[] some) {
-        //
-        int arrSize = size();
-        if (some.length < arrSize) {
-            some = Arrays.copyOf(some, arrSize);
-        }
-        System.arraycopy(arr, 0, some, 0, arrSize);
-        return some;
     }
 }
